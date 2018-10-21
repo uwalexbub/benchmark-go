@@ -1,3 +1,5 @@
+// This implements benchmarking of Go's slice data structure which is
+// an equivalent of a dynamic array in other programming languages
 package main
 
 import (
@@ -6,7 +8,7 @@ import (
 )
 
 // Dummy struct that implements the benchmarker interface.
-// In "Go" implementation the type implements the interface if it implements all its methods.
+// In Go language, a type implements an interface if it implements all the methods of that interface.
 type dynamicArrayBenchmarker struct {
 }
 
@@ -120,8 +122,4 @@ func (this dynamicArrayBenchmarker) runIterations(data []string, n int) int64 {
 	}
 
 	return avg(sumNanos, n)
-}
-
-func dummyAction(i int, s string) {
-
 }

@@ -33,3 +33,7 @@ func measureAction(action delegate) int64 {
 func avg(sum int64, n int) int64 {
 	return sum / int64(n)
 }
+
+func dummyAction(i int, s string) {
+
+}

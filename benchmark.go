@@ -5,7 +5,7 @@ import (
 )
 
 const MIN_CARDINALITY int = 1000
-const MAX_CARDINALITY int = 100 * 1000
+const MAX_CARDINALITY int = 1000 * 1000
 
 type Workload struct {
 	insertOps    int
