@@ -3,69 +3,100 @@ package main
 import (
 	"fmt"
 	"math/rand"
-	"time"
 )
 
-func Benchmark_dynamic_array(n int, p Params) {
-	fmt.Printf("Benchmarking dynamic array with cardinality %d\n", n)
-
-	rand.Seed(time.Now().UnixNano())
-	a := initialize(n)
-
-	n_deletes := int(p.deletes_portion * float32(n))
-	run_deletes(a, n_deletes)
-
-	n_inserts := int(p.inserts_portion * float32(n))
-	run_inserts(a, n_inserts)
-
-	n_searches := int(p.search_portion * float32(n))
-	run_searches(a, n_searches)
-
-	n_iterations := int(p.iterations_portion * float32(n))
-	run_iterations(a, n_iterations)
+// Dummy struct that implements the benchmarker interface.
+// In "Go" implementation the type implements the interface if it implements all its methods.
+type dynamicArrayBenchmarker struct {
 }
 
-func initialize(n int) []int {
-	fmt.Println("Initializing")
-	a := make([]int, n)
+func (this dynamicArrayBenchmarker) getName() string {
+	return "Dynamic Array"
+}
+
+func (this dynamicArrayBenchmarker) run(b Benchmark) Report {
+	fmt.Printf("Benchmarking %q with data size %d\n", this.getName(), b.dataSize)
+
+	initRandSeed()
+	data := this.initialize(b.dataSize)
+
+	report := Report{
+		dataStructureName: this.getName(),
+		dataSize:          b.dataSize,
+	}
+
+	report.avgInsertNanos = this.runInserts(data, b.workload.insertOps)
+	report.avgDeleteNanos = this.runDeletes(data, b.workload.deleteOps)
+	report.avgSearchNanos = this.runSearches(data, b.workload.searchOps)
+	report.avgIterationNanos = this.runIterations(data, b.workload.iterationOps)
+
+	return report
+}
+
+func (this dynamicArrayBenchmarker) initialize(n int) []string {
+	fmt.Printf("Initializing %q\n", this.getName())
+	data := make([]string, n)
 	for i := 0; i < n; i++ {
-		a[i] = rand.Intn(n)
+		data[i] = getUniqueValue()
 	}
 
-	return a
+	return data
 }
 
-func run_deletes(a []int, n int) {
-	fmt.Println("Running delete operations")
-	for i := 0; i < int(n); i++ {
-		del_index := rand.Intn(len(a))
-		a = append(a[:del_index], a[del_index+1:]...)
-	}
-}
-
-func run_inserts(a []int, n int) {
+func (this dynamicArrayBenchmarker) runInserts(data []string, n int) int64 {
 	fmt.Println("Running insert operations")
+	data_copy := make([]string, len(data))
+	copy(data_copy, data)
+	var opTimeSum int64 = 0
 	for i := 0; i < n; i++ {
 		// Insert in a random position
-		insert_index := rand.Intn(len(a))
-		value := rand.Intn(n)
-		a = append(a[:insert_index],
-			append([]int{value}, a[insert_index:]...)...)
+		insert_index := rand.Intn(len(data_copy))
+		value := getUniqueValue()
+		action := func() {
+			data_copy = append(data_copy[:insert_index],
+				append([]string{value}, data_copy[insert_index:]...)...)
+		}
+		opTimeSum += measureAction(action)
 	}
+
+	return avg(opTimeSum, n)
 }
 
-func run_searches(a []int, n int) {
+func (this dynamicArrayBenchmarker) runDeletes(data []string, n int) int64 {
+	fmt.Println("Running delete operations")
+	data_copy := make([]string, len(data))
+	copy(data_copy, data)
+	var opTimeSum int64 = 0
+	for i := 0; i < int(n); i++ {
+		del_index := rand.Intn(len(data_copy))
+		action := func() {
+			data_copy = append(data_copy[:del_index], data_copy[del_index+1:]...)
+		}
+		opTime := measureAction(action)
+		opTimeSum += opTime
+	}
+
+	return avg(opTimeSum, n)
+}
+
+func (this dynamicArrayBenchmarker) runSearches(a []string, n int) int64 {
 	fmt.Println("Running search operations")
+	var opTimeSum int64 = 0
 	for i := 0; i < n; i++ {
 		// Pick any index at random and get the value by that index,
 		// then search that value in the array. That way we know for sure that value will exist.
 		index := rand.Intn(len(a))
 		value := a[index]
-		search(a, value)
+		action := func() {
+			this.search(a, value)
+		}
+		opTimeSum += measureAction(action)
 	}
+
+	return avg(opTimeSum, n)
 }
 
-func search(array []int, value int) int {
+func (this dynamicArrayBenchmarker) search(array []string, value string) int {
 	for i := 0; i < len(array); i++ {
 		if value == array[i] {
 			return i
@@ -75,11 +106,22 @@ func search(array []int, value int) int {
 	return -1
 }
 
-func run_iterations(a []int, n int) {
+func (this dynamicArrayBenchmarker) runIterations(data []string, n int) int64 {
 	fmt.Println("Running iteration operations")
+	var sumNanos int64 = 0
 	for i := 0; i < n; i++ {
-		for j := 0; j < len(a); j++ {
-			// do nothing
+		action := func() {
+			// This is Go iterator over a collection
+			for index, value := range data {
+				dummyAction(index, value)
+			}
 		}
+		sumNanos += measureAction(action)
 	}
+
+	return avg(sumNanos, n)
+}
+
+func dummyAction(i int, s string) {
+
 }

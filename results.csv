@@ -1,0 +1,8 @@
+#DataStructureName,DataSize,AvgInsertNanos,AvgDeleteNanos,AvgSearchNano,AvgIterationNanos
+Dynamic Array,1000,7506,725,862,1589
+#DataStructureName,DataSize,AvgInsertNanos,AvgDeleteNanos,AvgSearchNano,AvgIterationNanos
+Dynamic Array,10000,15908,6143,2079,4166
+#DataStructureName,DataSize,AvgInsertNanos,AvgDeleteNanos,AvgSearchNano,AvgIterationNanos
+Dynamic Array,100000,133205,21988,17651,36010
+#DataStructureName,DataSize,AvgInsertNanos,AvgDeleteNanos,AvgSearchNano,AvgIterationNanos
+Dynamic Array,1000000,1064739,486748,231658,369892
