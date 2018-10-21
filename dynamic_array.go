@@ -16,27 +16,21 @@ func (this dynamicArrayBenchmarker) getName() string {
 	return "Dynamic Array"
 }
 
-func (this dynamicArrayBenchmarker) run(b Benchmark) Report {
-	fmt.Printf("Benchmarking %q with data size %d\n", this.getName(), b.dataSize)
-
+func (this dynamicArrayBenchmarker) run(b Benchmark) Measurements {
 	initRandSeed()
 	data := this.initialize(b.dataSize)
 
-	report := Report{
-		dataStructureName: this.getName(),
-		dataSize:          b.dataSize,
-	}
+	measurements := Measurements{}
+	measurements.avgInsertNanos = this.runInserts(data, b.workload.insertOps)
+	measurements.avgDeleteNanos = this.runDeletes(data, b.workload.deleteOps)
+	measurements.avgSearchNanos = this.runSearches(data, b.workload.searchOps)
+	measurements.avgIterationNanos = this.runIterations(data, b.workload.iterationOps)
 
-	report.avgInsertNanos = this.runInserts(data, b.workload.insertOps)
-	report.avgDeleteNanos = this.runDeletes(data, b.workload.deleteOps)
-	report.avgSearchNanos = this.runSearches(data, b.workload.searchOps)
-	report.avgIterationNanos = this.runIterations(data, b.workload.iterationOps)
-
-	return report
+	return measurements
 }
 
 func (this dynamicArrayBenchmarker) initialize(n int) []string {
-	fmt.Printf("Initializing %q\n", this.getName())
+	fmt.Printf("Initializing")
 	data := make([]string, n)
 	for i := 0; i < n; i++ {
 		data[i] = getUniqueValue()

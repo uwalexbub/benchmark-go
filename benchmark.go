@@ -21,42 +21,50 @@ type Benchmark struct {
 
 type Benchmarker interface {
 	getName() string
-	run(Benchmark) Report
+	run(Benchmark) Measurements
 }
 
-type Report struct {
-	dataStructureName string
-	dataSize          int
+type Measurements struct {
 	avgInsertNanos    int64
 	avgDeleteNanos    int64
 	avgSearchNanos    int64
 	avgIterationNanos int64
 }
 
+type Report struct {
+	dataStructureName string
+	dataSize          int
+	measurements      Measurements
+}
+
+var workload Workload = Workload{
+	insertOps:    50,
+	deleteOps:    50,
+	searchOps:    50,
+	iterationOps: 50,
+}
+
+var allBenchmarkers []Benchmarker = []Benchmarker{
+	dynamicArrayBenchmarker{},
+	mapBenchmarker{},
+}
+
 func main() {
-	workload := Workload{
-		insertOps:    50,
-		deleteOps:    50,
-		searchOps:    50,
-		iterationOps: 50,
-	}
-
-	allBenchmarkers := []Benchmarker{
-		dynamicArrayBenchmarker{},
-		mapBenchmarker{},
-	}
-
 	allReports := []Report{}
 	for _, benchmarker := range allBenchmarkers {
 		fmt.Println("=============================")
-		fmt.Printf("Running %q benchmark\n", benchmarker.getName())
-
 		for n := MIN_CARDINALITY; n <= MAX_CARDINALITY; n = n * 10 {
+			fmt.Printf("Running %q benchmark with data size %d\n", benchmarker.getName(), n)
 			b := Benchmark{
 				dataSize: n,
 				workload: workload,
 			}
-			report := benchmarker.run(b)
+			measurements := benchmarker.run(b)
+			report := Report{
+				dataStructureName: benchmarker.getName(),
+				dataSize:          n,
+				measurements:      measurements,
+			}
 			printReport(report)
 			allReports = append(allReports, report)
 		}
@@ -68,8 +76,8 @@ func printReport(report Report) {
 	fmt.Printf("%s,%d,%d,%d,%d,%d\n",
 		report.dataStructureName,
 		report.dataSize,
-		report.avgInsertNanos,
-		report.avgDeleteNanos,
-		report.avgSearchNanos,
-		report.avgIterationNanos)
+		report.measurements.avgInsertNanos,
+		report.measurements.avgDeleteNanos,
+		report.measurements.avgSearchNanos,
+		report.measurements.avgIterationNanos)
 }

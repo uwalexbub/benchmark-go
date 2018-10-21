@@ -18,27 +18,23 @@ func (this mapBenchmarker) getName() string {
 	return "Map"
 }
 
-func (this mapBenchmarker) run(b Benchmark) Report {
+func (this mapBenchmarker) run(b Benchmark) Measurements {
 	fmt.Printf("Benchmarking %q with data size %d\n", this.getName(), b.dataSize)
 
 	initRandSeed()
 	data := this.initialize(b.dataSize)
 
-	report := Report{
-		dataStructureName: this.getName(),
-		dataSize:          b.dataSize,
-	}
+	measurements := Measurements{}
+	measurements.avgInsertNanos = this.runInserts(data, b.workload.insertOps)
+	measurements.avgDeleteNanos = this.runDeletes(data, b.workload.deleteOps)
+	measurements.avgSearchNanos = this.runSearches(data, b.workload.searchOps)
+	measurements.avgIterationNanos = this.runIterations(data, b.workload.iterationOps)
 
-	report.avgInsertNanos = this.runInserts(data, b.workload.insertOps)
-	report.avgDeleteNanos = this.runDeletes(data, b.workload.deleteOps)
-	report.avgSearchNanos = this.runSearches(data, b.workload.searchOps)
-	report.avgIterationNanos = this.runIterations(data, b.workload.iterationOps)
-
-	return report
+	return measurements
 }
 
 func (this mapBenchmarker) initialize(n int) mapType {
-	fmt.Printf("Initializing %q\n", this.getName())
+	fmt.Printf("Initializing")
 	data := make(mapType)
 	for i := 0; i < n; i++ {
 		key := getUniqueValue()
