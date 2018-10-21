@@ -1,3 +1,5 @@
+// This implements benchmarking of TreeSet data structure
+// from 3-rd party library https://github.com/emirpasic/gods#treeset
 package main
 
 import (
@@ -13,7 +15,7 @@ type treesetBenchmarker struct {
 }
 
 func (this treesetBenchmarker) getName() string {
-	return "Tree Set"
+	return "TreeSet"
 }
 
 func (this treesetBenchmarker) run(b Benchmark) Measurements {
@@ -91,7 +93,7 @@ func (this treesetBenchmarker) runSearches(data *treeset.Set, n int) int64 {
 				if data_copy.Contains(value) {
 					dummyAction(0, value.(string))
 				} else {
-					panic(fmt.Sprintf("Value %q not found in the treeset", value))
+					panic(fmt.Sprintf("Value %q not found in the tree set", value))
 				}
 			}
 			sumNanos += measureAction(action)

@@ -9,14 +9,14 @@ import (
 
 // Dummy struct that implements the benchmarker interface.
 // In Go language, a type implements an interface if it implements all the methods of that interface.
-type dynamicArrayBenchmarker struct {
+type sliceBenchmarker struct {
 }
 
-func (this dynamicArrayBenchmarker) getName() string {
-	return "Dynamic Array"
+func (this sliceBenchmarker) getName() string {
+	return "Slice"
 }
 
-func (this dynamicArrayBenchmarker) run(b Benchmark) Measurements {
+func (this sliceBenchmarker) run(b Benchmark) Measurements {
 	initRandSeed()
 	data := this.initialize(b.dataSize)
 
@@ -29,7 +29,7 @@ func (this dynamicArrayBenchmarker) run(b Benchmark) Measurements {
 	return measurements
 }
 
-func (this dynamicArrayBenchmarker) initialize(n int) []string {
+func (this sliceBenchmarker) initialize(n int) []string {
 	fmt.Println("Initializing")
 	data := make([]string, n)
 	for i := 0; i < n; i++ {
@@ -39,7 +39,7 @@ func (this dynamicArrayBenchmarker) initialize(n int) []string {
 	return data
 }
 
-func (this dynamicArrayBenchmarker) runInserts(data []string, n int) int64 {
+func (this sliceBenchmarker) runInserts(data []string, n int) int64 {
 	fmt.Println("Running insert operations")
 	data_copy := make([]string, len(data))
 	copy(data_copy, data)
@@ -58,7 +58,7 @@ func (this dynamicArrayBenchmarker) runInserts(data []string, n int) int64 {
 	return avg(opTimeSum, n)
 }
 
-func (this dynamicArrayBenchmarker) runDeletes(data []string, n int) int64 {
+func (this sliceBenchmarker) runDeletes(data []string, n int) int64 {
 	fmt.Println("Running delete operations")
 	data_copy := make([]string, len(data))
 	copy(data_copy, data)
@@ -75,16 +75,18 @@ func (this dynamicArrayBenchmarker) runDeletes(data []string, n int) int64 {
 	return avg(opTimeSum, n)
 }
 
-func (this dynamicArrayBenchmarker) runSearches(a []string, n int) int64 {
+func (this sliceBenchmarker) runSearches(data []string, n int) int64 {
 	fmt.Println("Running search operations")
 	var opTimeSum int64 = 0
 	for i := 0; i < n; i++ {
 		// Pick any index at random and get the value by that index,
 		// then search that value in the array. That way we know for sure that value will exist.
-		index := rand.Intn(len(a))
-		value := a[index]
+		index := rand.Intn(len(data))
+		value := data[index]
 		action := func() {
-			this.search(a, value)
+			if !this.search(data, value) {
+				panic(fmt.Sprintf("Value %q not found in the slice", value))
+			}
 		}
 		opTimeSum += measureAction(action)
 	}
@@ -92,17 +94,17 @@ func (this dynamicArrayBenchmarker) runSearches(a []string, n int) int64 {
 	return avg(opTimeSum, n)
 }
 
-func (this dynamicArrayBenchmarker) search(array []string, value string) int {
+func (this sliceBenchmarker) search(array []string, value string) bool {
 	for i := 0; i < len(array); i++ {
 		if value == array[i] {
-			return i
+			return true
 		}
 	}
 
-	return -1
+	return false
 }
 
-func (this dynamicArrayBenchmarker) runIterations(data []string, n int) int64 {
+func (this sliceBenchmarker) runIterations(data []string, n int) int64 {
 	fmt.Println("Running iteration operations")
 	var sumNanos int64 = 0
 	for i := 0; i < n; i++ {

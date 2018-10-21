@@ -38,14 +38,15 @@ type Report struct {
 }
 
 var workload Workload = Workload{
-	insertOps:    50,
-	deleteOps:    50,
-	searchOps:    50,
-	iterationOps: 50,
+	insertOps:    100,
+	deleteOps:    100,
+	searchOps:    100,
+	iterationOps: 100,
 }
 
 var allBenchmarkers []Benchmarker = []Benchmarker{
-	dynamicArrayBenchmarker{},
+	sliceBenchmarker{},
+	arrayListBenchmarker{},
 	mapBenchmarker{},
 	treesetBenchmarker{},
 }
