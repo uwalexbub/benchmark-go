@@ -30,7 +30,7 @@ func (this dynamicArrayBenchmarker) run(b Benchmark) Measurements {
 }
 
 func (this dynamicArrayBenchmarker) initialize(n int) []string {
-	fmt.Printf("Initializing")
+	fmt.Println("Initializing")
 	data := make([]string, n)
 	for i := 0; i < n; i++ {
 		data[i] = getUniqueValue()

@@ -47,6 +47,7 @@ var workload Workload = Workload{
 var allBenchmarkers []Benchmarker = []Benchmarker{
 	dynamicArrayBenchmarker{},
 	mapBenchmarker{},
+	treesetBenchmarker{},
 }
 
 func main() {

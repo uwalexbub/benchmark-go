@@ -19,8 +19,6 @@ func (this mapBenchmarker) getName() string {
 }
 
 func (this mapBenchmarker) run(b Benchmark) Measurements {
-	fmt.Printf("Benchmarking %q with data size %d\n", this.getName(), b.dataSize)
-
 	initRandSeed()
 	data := this.initialize(b.dataSize)
 
@@ -34,7 +32,7 @@ func (this mapBenchmarker) run(b Benchmark) Measurements {
 }
 
 func (this mapBenchmarker) initialize(n int) mapType {
-	fmt.Printf("Initializing")
+	fmt.Println("Initializing")
 	data := make(mapType)
 	for i := 0; i < n; i++ {
 		key := getUniqueValue()
