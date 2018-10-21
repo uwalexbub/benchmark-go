@@ -11,7 +11,7 @@ func initRandSeed() {
 	rand.Seed(time.Now().UnixNano())
 }
 
-// This function is sources from https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
+// This function is sourced from https://stackoverflow.com/questions/22892120/how-to-generate-a-random-string-of-a-fixed-length-in-go
 func getUniqueValue() string {
 	const letters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 	const length = 6
@@ -35,5 +35,5 @@ func avg(sum int64, n int) int64 {
 }
 
 func dummyAction(i int, s string) {
-
+	// Do nothing
 }
