@@ -39,7 +39,7 @@ type Report struct {
 	measurements   Measurements
 }
 
-const reportHeader string = "#CollectionType,CollectionSize,AvgInsertNanos,AvgDeleteNanos,AvgSearchNano,AvgIterationNanos"
+const reportHeader string = "#CollectionType,CollectionSize,AvgInsertNanos,AvgDeleteNanos,AvgSearchNanos,AvgIterationNanos"
 
 var workload Workload = Workload{
 	insertOps:    100,
@@ -87,7 +87,7 @@ func printReport(report Report) {
 
 func writeReports(reports []Report) {
 	t := time.Now()
-	filename := fmt.Sprintf("report-%d-%02d-%02d-%02d%02d%02d.csv",
+	filename := fmt.Sprintf("reports/report-%d-%02d-%02d-%02d%02d%02d.csv",
 		t.Year(), t.Month(), t.Day(),
 		t.Hour(), t.Minute(), t.Second())
 
